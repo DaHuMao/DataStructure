@@ -5,7 +5,7 @@ rbtree: 将将红黑树包装成自定义的set，速度比STL快.
 
 cd rebtree
 
-g++ RBTree_test.cpp --std=c+=11
+g++ RBTree_test.cpp --std=c++11
 
 ./a.out
 
