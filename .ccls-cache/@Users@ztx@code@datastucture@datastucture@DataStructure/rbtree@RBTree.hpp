@@ -152,7 +152,7 @@ public:
 	//想怎么删除，就怎么删除
 	void erase_unique(T value);//删除一个等于value的元素
 	void erase_equal(T value); //删除所有等于value的元素
-	void erase(const_iterator&& l, const_iterator&& r);//删除迭代器区间的元素
+	void erase(const_iterator l, const_iterator r);//删除迭代器区间的元素
 	void erase(const_iterator&& start, int n);//删除从指定迭代器开始的n个元素
 	void erase(const_iterator&& it);//删除迭代器指向的元素
 
@@ -332,7 +332,7 @@ private:
 	}
 
 	template<class T, class keycompare>
-	void RBTree<T, keycompare>::erase(const_iterator&& l, const_iterator&& r) {
+	void RBTree<T, keycompare>::erase(const_iterator l, const_iterator r) {
 		while (l != r&&l != end())
 			erase(l++);
 	}

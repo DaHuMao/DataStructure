@@ -5,63 +5,31 @@
 using namespace std;
 
 clock_t start, finish;
-void printTime(const string&& s,clock_t t){
+void printTime(const char* s,clock_t t){
   cout<<s<<t/CLOCKS_PER_SEC<<"s "<<t%CLOCKS_PER_SEC<<"ms"<<endl;
 }
-void test(int num) {
-time_t rawtime;
-time(&rawtime);
-struct tm * ti = localtime(&rawtime);
-
-int v[10000];
-
-RBTree<int> t;
-multiset<int> s;
-//int time1 = ti->tm_min * 60 + ti->tm_sec;
-start=clock();
-cout << "=====RBtree开始插入"<<num<<"个数据=====:" << endl;
-
-for (int i = 0; i < num; i++) {
-	int a = rand() % INT_MAX;
-	t.insert(a);
-	//s.insert(a);
+void insert_erase_rbtree(int num){
+  RBTree<int> s;
+  for (int i = 0; i < num; i++) {
+    int a = rand() % num;
+    s.insert(a);
+  }
+  for (int i = 0; i < num; i++) {
+    int a = rand() % num;
+    s.erase_equal(a);
+  }
 }
-finish=clock() - start;
-start=clock();
-printTime("RBTree插入完成，用时： ",finish);
-cout << "set开始插入"<<num<<"个数据====="<<endl;
-for (int i = 0; i < num; i++) {
-	int a = rand() % INT_MAX;
-	s.insert(a);
+void insert_erase_set(int num){
+  multiset<int> s;
+  for (int i = 0; i < num; i++) {
+    int a = rand() % num;
+    s.insert(a);
+  }
+  for (int i = 0; i < num; i++) {
+    int a = rand() % num;
+    s.erase(a);
+  }
 }
-
-finish=clock() - start;
-start=clock();
-printTime("set插入完成，用时： ",finish);
-//t.mid_traverse();
-auto it1 = t.begin();
-auto it2 = s.begin();
-cout << "===rbtree开始删除====="<<endl;
-while (it1 != t.end()) {
-	t.erase(it1++);
-}
-finish=clock() - start;
-start=clock();
-if (it1 == t.end()) {
-  printTime("RBTree 删除完成，用时： ", finish);
-}
-cout << "===set开始删除======"<<endl;
-while (it2 != s.end()) {
-	s.erase(it2++);
-}
-finish=clock() - start;
-start=clock();
-if (it2 == s.end()) {
-  printTime("set 删除完成，用时： ", finish);
-}
-int cnt = 0;
-}
-
  
 ifstream infile;
 ofstream outfile;
@@ -169,43 +137,53 @@ void solve1() {
 
 
 
-void test_google(bool isSet){
+void test_google(int isSet){
 	int T;
 	infile >> T;
 	for (int i = 1; i <= T; i++) {
 		outfile << "Case #" << i << ": ";
-    if(isSet)
+    if(isSet > 0)
       solve();
     else
       solve1();
 	}
 } 
+
+void execute_func(const char* str,void (*fun)(int),int func_pram){
+  start=clock();
+  fun(func_pram);
+  finish=clock() - start;
+  start=clock();
+  printTime(str, finish);
+}
+
 int main() {
 
   vector<int> v={8,2,9,1,16,8,4,3};
   RBTree<int> rb(v.begin(),v.end());
-  auto it=rb.lower_bound(8);
-  cout<<*(--it)<<endl;
-  it=rb.upper_bound(8);
-  cout<<*(++it)<<endl;
-  
+ 
+  cout<<"start  tarversal in rbtree with initialization of vector{8 ,2 ,9, 1, 16, 8, 4, 3}"<<endl;
   for(auto it=rb.begin();it!=rb.end();++it)
-    cout<<*it<<endl;
-
-
-  cout<<"插入数据，删除数据"<<endl;
-  test(5000000);
+    cout<<*it<<" ";
   cout<<endl;
 
+  auto it=rb.lower_bound(5);
+  cout<<"lower_bound 5: "<<*(it)<<endl;
+  it=rb.upper_bound(5);
+  cout<<"upper_bound 5: "<<*(it)<<endl;
+  cout<<endl;
+  int num=10000000;
+
+  cout<<"rbtree and set start insert and erase "<<num<<" data separately"<<endl;
+  execute_func("set useing time: ", insert_erase_set, num);
+  execute_func("RBTree useing time: ", insert_erase_rbtree, num);
+  
+  cout<<endl;
   cout<<"------google kickstart test-------"<<endl;
   infile.open("./A-large-practice.in");
 	outfile.open("./A-large-practice.out");
-  
-  start=clock();
-  test_google(false);
-  finish=clock() - start;
-  start=clock();
-  printTime("RBTree in google test: using time: ", finish);
+
+  execute_func("set using time in a kickstart example: ", test_google, 1);
 
   infile.close();
   outfile.close();
@@ -213,11 +191,7 @@ int main() {
   infile.open("./A-large-practice.in");
 	outfile.open("./A-large-practice1.out");
   
-  start=clock();
-  test_google(true);
-  finish=clock() - start;
-  start=clock();
-  printTime("set in google test: using time: ", finish);
+  execute_func("RBTree using time in a kickstart example: ", test_google, 0);
   
   infile.close();
   outfile.close();
